@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+    id 'net.serenity-bdd.serenity-gradle-plugin' version '4.2.34'
+}
+
+group = 'com.autoapiscreenplay'
+version = '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+dependencies {
+    testImplementation 'net.serenity-bdd:serenity-core:4.2.34'
+    testImplementation 'net.serenity-bdd:serenity-cucumber:4.2.34'
+    testImplementation 'net.serenity-bdd:serenity-screenplay:4.2.34'
+    testImplementation 'net.serenity-bdd:serenity-rest-assured:4.2.34'
+    testImplementation 'net.serenity-bdd:serenity-screenplay-rest:4.2.34'
+
+    testImplementation 'io.rest-assured:rest-assured:5.3.2'
+
+    testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+
+    testImplementation 'io.cucumber:cucumber-java:7.15.0'
+    testImplementation 'io.cucumber:cucumber-junit:7.15.0'
+
+    testImplementation 'junit:junit:4.13.2'
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    testCompileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+}
+
+test {
+    useJUnit()
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}
+
+serenity {
+    projectKey = 'AUTO_API_SCREENPLAY'
+    testRoot = 'runner'
+}
