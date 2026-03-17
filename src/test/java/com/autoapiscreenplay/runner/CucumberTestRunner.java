@@ -1,4 +1,4 @@
-package runner;
+package com.autoapiscreenplay.runner;
 
 import io.cucumber.junit.CucumberOptions;
 import net.serenitybdd.cucumber.CucumberWithSerenity;
@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         plugin = {"pretty"},
         features = "src/test/resources/features",
-        glue = "steps"
+        glue = "com.autoapiscreenplay.steps"
 )
 public class CucumberTestRunner {
 }
