@@ -1,8 +1,8 @@
-package screenplay.questions;
+package com.autoapiscreenplay.screenplay.questions;
 
-import net.serenitybdd.rest.SerenityRest;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Question;
+import net.serenitybdd.screenplay.rest.questions.LastResponse;
 
 public class ResponseStatusQuestion implements Question<Integer> {
 
@@ -12,6 +12,6 @@ public class ResponseStatusQuestion implements Question<Integer> {
 
     @Override
     public Integer answeredBy(Actor actor) {
-        return SerenityRest.lastResponse().getStatusCode();
+        return LastResponse.received().answeredBy(actor).statusCode();
     }
 }

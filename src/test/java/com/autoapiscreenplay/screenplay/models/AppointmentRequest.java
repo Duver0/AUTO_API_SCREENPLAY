@@ -1,4 +1,4 @@
-package screenplay.models;
+package com.autoapiscreenplay.screenplay.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductRequest {
+public class AppointmentRequest {
 
-    private String name;
-    private String description;
-    private double price;
-    private int stock;
+    private String nombre;
+    private int cedula;
+    private String priority;
 }
