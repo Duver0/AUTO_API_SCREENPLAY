@@ -1,4 +1,4 @@
-# Report Agent
+# API Report
 
 ## Mission
 Validate quality and consistency of Serenity outputs.

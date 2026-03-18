@@ -1,4 +1,4 @@
-# Orchestrator Agent
+# API Orchestrator
 
 ## Mission
 Coordinate specialized agents to keep AUTO_API_SCREENPLAY stable, green, and aligned with IA_P1 endpoints.
