@@ -1,4 +1,4 @@
-# Scenario Agent
+# API Scenario
 
 ## Mission
 Design Cucumber features and step definitions for business workflows.

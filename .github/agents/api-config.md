@@ -1,4 +1,4 @@
-# Config Agent
+# API Config
 
 ## Mission
 Maintain test framework configuration for Serenity + Cucumber + Screenplay REST.
