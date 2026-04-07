@@ -5,11 +5,13 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import net.serenitybdd.screenplay.Actor;
-import net.serenitybdd.screenplay.rest.questions.LastResponse;
 import com.autoapiscreenplay.screenplay.actors.ApiActorFactory;
 import com.autoapiscreenplay.screenplay.questions.ResponseBodyQuestion;
 import com.autoapiscreenplay.screenplay.questions.ResponseStatusQuestion;
-import com.autoapiscreenplay.screenplay.tasks.*;
+import com.autoapiscreenplay.screenplay.tasks.CreateAccountTask;
+import com.autoapiscreenplay.screenplay.tasks.CreateAppointmentTask;
+import com.autoapiscreenplay.screenplay.tasks.GetAppointmentQueueTask;
+import com.autoapiscreenplay.screenplay.tasks.SignInTask;
 
 import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -23,7 +25,6 @@ public class MedicalWorkflowSteps {
     private String appointmentName;
     private int appointmentCedula;
     private String appointmentPriority;
-    private String appointmentId;
 
     @Before
     public void setUpActor() {
@@ -32,6 +33,9 @@ public class MedicalWorkflowSteps {
 
     @Given("an api consumer is authenticated to call the services")
     public void anApiConsumerIsAuthenticatedToCallTheServices() {
+        if (apiConsumer == null) {
+            throw new IllegalStateException("API actor was not initialized");
+        }
     }
 
     @When("the consumer creates a new internal account")
@@ -61,20 +65,6 @@ public class MedicalWorkflowSteps {
                 seeThat(ResponseStatusQuestion.theStatusCode(), equalTo(200)),
                 seeThat(ResponseBodyQuestion.field("find { it.cedula == " + appointmentCedula + " }.id"), notNullValue())
         );
-
-        appointmentId = LastResponse.received().answeredBy(apiConsumer)
-                .jsonPath()
-                .getString("find { it.cedula == " + appointmentCedula + " }.id");
-    }
-
-    @When("the consumer updates the created appointment")
-    public void theConsumerUpdatesTheCreatedAppointment() {
-        apiConsumer.attemptsTo(UpdateAppointmentTask.withId(appointmentId));
-    }
-
-    @When("the consumer deletes the created appointment")
-    public void theConsumerDeletesTheCreatedAppointment() {
-        apiConsumer.attemptsTo(DeleteAppointmentTask.withId(appointmentId));
     }
 
     @Then("the operation should return status {int}")

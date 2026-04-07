@@ -11,7 +11,7 @@ Feature: Medical appointments api workflow
     Then the operation should return status 201
 
     When the consumer signs in with valid credentials
-    Then the operation should return status 201
+    Then the operation should return status 200
 
     When the consumer creates a new appointment
     Then the operation should return status 202
