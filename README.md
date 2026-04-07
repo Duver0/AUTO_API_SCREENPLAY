@@ -1,32 +1,24 @@
 # AUTO_API_SCREENPLAY
 
-REST API automation project using the Screenplay pattern with Serenity BDD and Serenity Rest (RestAssured integration). The project validates a locally running medical software API through a full CRUD lifecycle.
+Automatizacion de API REST con Screenplay, Serenity BDD y Serenity Rest. El proyecto valida flujos de autenticacion, turnos y ciclo de vida de consultorio contra un backend local.
 
----
+## 1. Descripcion
 
-## 1. Project Description
+Las pruebas consumen `http://localhost:3000/` y modelan cada operacion HTTP como una Task independiente, manteniendo pasos declarativos en Gherkin.
 
-This project automates a REST API running at `http://localhost:3000/` using the **Screenplay pattern** with **Serenity BDD** and **RestAssured**. Each HTTP operation is encapsulated in its own Task class following the Single Responsibility Principle. Actors receive the `CallAnApi` ability and interact with the API through declarative, business-oriented Gherkin steps.
+Stack principal:
+- Java 17+
+- Serenity BDD + Serenity Rest
+- Cucumber con JUnit4
+- Gradle Wrapper
 
-**Stack:**
-- Language: Java 17+
-- Framework: Serenity BDD + Serenity Rest (RestAssured integration)
-- Dependency management: Gradle
-- Test runner: Cucumber (JUnit 4)
-- Pattern: Screenplay with REST — no Selenium, no WebDriver
+## 2. Prerrequisitos y configuracion
 
----
+- Java 17 o superior
+- API objetivo disponible en `http://localhost:3000/`
+- Docker Compose de `IA_P1` levantado (producer en puerto 3000)
 
-## 2. Prerequisites and Configuration
-
-### Prerequisites
-- Java 17 or higher
-- Gradle (or use the included `./gradlew` wrapper)
-- The target API must be running locally at `http://localhost:3000/`
-
-### Base URI Configuration
-
-The base URL is configured in `serenity.conf` at the project root:
+Base URL en `serenity.conf`:
 
 ```hocon
 environments {
@@ -36,25 +28,25 @@ environments {
 }
 ```
 
-To point the tests at a different environment, update the `base.url` value in `serenity.conf` before running.
+## 3. Ejecucion
 
----
-
-## 3. Run Command
+Suite completa:
 
 ```bash
-./gradlew clean test aggregate
+./gradlew clean test
 ```
 
----
+Runner especifico ciclo de vida de consultorio:
 
-## 4. Report Command
+```bash
+./gradlew clean test --tests com.autoapiscreenplay.runner.CicloVidaConsultorioRunner
+```
+
+Generar reporte Serenity:
 
 ```bash
 ./gradlew aggregate
 ```
-
-The HTML report will be generated in `target/site/serenity/index.html`.
 
 To open it from Linux after generation:
 
@@ -62,54 +54,76 @@ To open it from Linux after generation:
 xdg-open target/site/serenity/index.html
 ```
 
----
+Reporte HTML: `target/site/serenity/index.html`
 
-## 5. Scenario Matrix — Medical Software Endpoints
+## 4. Features activas
 
-The suite runs a single scenario covering the full CRUD lifecycle:
+### api_flow.feature
 
-| # | Action | HTTP Verb | Endpoint | What it validates |
-|---|----------|-----------|----------|-------------------|
-| 1 | Register account | POST | `/auth/signUp` | Staff account creation |
-| 2 | Sign in | POST | `/auth/signIn` | Authentication works |
-| 3 | Create appointment | POST | `/turnos` | Appointment accepted |
-| 4 | Consult queue | GET | `/turnos` | List monitoring |
-| 5 | Update appointment | PUT | `/turnos/{id}` | Resource modification |
-| 6 | Delete appointment | DELETE | `/turnos/{id}` | Resource removal |
+Escenario `@CRUD` para validar flujo base:
+- `POST /auth/signUp`
+- `POST /auth/signIn`
+- `POST /turnos`
+- `GET /turnos`
 
----
+### ciclo_vida_consultorio.feature
 
-## 6. Project Structure
+Escenarios independientes bajo tag `@ciclo_vida_consultorio`:
+- `POST /auth/signUp` y `POST /auth/signIn`
+- `POST /medicos/consultorio/asignar`
+- `POST /medicos/atencion/iniciar`
+- `POST /medicos/atencion/finalizar`
+- `PATCH /medicos/disponibilidad`
+- `POST /medicos/consultorio/liberar`
+- `GET /medicos/consultorio/estado/{consultorioId}`
 
-```
+## 5. Estructura del proyecto
+
+```text
 src/
   test/
     java/
       com.autoapiscreenplay/
         runner/
           CucumberTestRunner.java
+          CicloVidaConsultorioRunner.java
         screenplay/
           actors/
             ApiActorFactory.java
-          tasks/
-            CreateAccountTask.java
-            SignInTask.java
-            CreateAppointmentTask.java
-            GetAppointmentQueueTask.java
-            UpdateAppointmentTask.java
-            DeleteAppointmentTask.java
-          questions/
-            ResponseStatusQuestion.java
-            ResponseBodyQuestion.java
+          context/
+            ApiContextKeys.java
+          interactions/
+            ResolveAvailableConsultorioInteraction.java
+            WaitForConsultorioStateInteraction.java
           models/
-            SignUpRequest.java
-            SignInRequest.java
             AppointmentRequest.java
+            AssignConsultorioRequest.java
+            SetAvailabilityRequest.java
+            SignInRequest.java
+            SignUpRequest.java
+            StartAttentionRequest.java
+          questions/
+            ResponseBodyQuestion.java
+            ResponseStatusQuestion.java
+          tasks/
+            AuthenticateDoctorTask.java
+            CreateAccountTask.java
+            CreateAppointmentTask.java
+            CreatePatientInQueueTask.java
+            FinishMedicalAttentionTask.java
+            GetAppointmentQueueTask.java
+            GetConsultorioStateTask.java
+            LinkDoctorToConsultorioTask.java
+            RegisterDoctorAccountTask.java
+            ReleaseConsultorioTask.java
+            SignInTask.java
+            StartMedicalAttentionTask.java
+            UpdateAvailabilityTask.java
         steps/
+          ConsultorioLifecycleSteps.java
           MedicalWorkflowSteps.java
     resources/
       features/
         api_flow.feature
-serenity.conf
-build.gradle
+        ciclo_vida_consultorio.feature
 ```
